@@ -1,27 +1,34 @@
+const Triangle = require ('../src/Triangle');
 const Point = require ('../src/Point.js');
-const Shape = require ('../src/Shape.js')
 
-class TestShape extends Shape {}
-
-describe('Shape', () => {
-    const points = [new Point(0, 0), new Point(0, 3), new Point(4, 3)];
-
-    it('should fail to be created with 2 points', () => {
-        expect(() => new TestShape([new Point(0, 0), new Point(0, 3)])).toThrow();
+describe('Triangle', () => {
+    it('should be able to create instance of Triangle', () => {
+        expect(() => new Triangle(new Point(0, 0), new Point(0, 3), new Point(4, 3))).not.toThrow();
     });
 
-    it('should show it\'s color and filled property', () => {
-        expect(new TestShape(points, 'blue', false).toString())
-            .toBe('A Shape with color of blue and not filled. Points: (0, 0), (0, 3), (4, 3).');
-        expect(new TestShape(points, 'mustard', true).toString())
-            .toBe('A Shape with color of mustard and filled. Points: (0, 0), (0, 3), (4, 3).');
+    it("should return required string", () => {
+        expect(
+            new Triangle(
+                new Point(0, 0),
+                new Point(7, 0),
+                new Point(3, 8),
+            ).toString()
+        ).toBe("Triangle[v1=(0, 0),v2=(7, 0),v3=(3, 8)]");
     });
 
-    it('should have default color and filled property', () => {
-        expect(new TestShape(points).toString()).toBe('A Shape with color of green and filled. Points: (0, 0), (0, 3), (4, 3).');
+    it('should tell if the triangle is equilateral', () => {
+        // Considering it's impossible to create an equilateral triangle with points with integer coordinates,
+        // use proper comparison of floating point numbers to find out if they are the same.
+        // E.g. 0.2 + 0.4 will equal to 0.6000000000000001 in JavaScript, but in our case
+        // 0.2 + 0.4 should equal 0.6
+        expect(new Triangle(new Point(0, 0), new Point(6, 0), new Point(3, 5.196)).getType()).toBe('equilateral triangle');
     });
 
-    it('should calculate the perimeter', () => {
-        expect(new TestShape(points).getPerimeter()).toBe(12);
+    it('should tell if the triangle is isosceles', () => {
+        expect(new Triangle(new Point(0, 0), new Point(6, 0), new Point(3, 8)).getType()).toBe('isosceles triangle');
+    });
+
+    it('should tell if the triangle is scalene', () => {
+        expect(new Triangle(new Point(0, 0), new Point(7, 0), new Point(3, 8)).getType()).toBe('scalene triangle');
     });
 });

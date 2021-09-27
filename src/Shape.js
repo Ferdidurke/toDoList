@@ -31,8 +31,6 @@ function Shape (points, color = 'green', filled = true) {
 
         }
 
-
 module.exports = Shape;
 let shape = new Shape([new Point(1,3), new Point(2, 4), new Point (4,5)],'red', false)
 
-console.log (shape.getPerimeter())
