@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // TASK CREATOR
     const createTask = (task) => {
-        return `<div class="task" id="${task.id}" draggable="true" style="background: ${task.color}" tabindex="0">
+        return `<div class="task" id="${task.id}" title = "${task.taskText}" draggable="true" style="background: ${task.color}" tabindex="0">
             <div class="closed-button__container">
                 <button class="closed-button" onclick="deleter(${task.id})">X</button>
             </div>
