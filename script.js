@@ -7,10 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let taskDateDeadline = document.querySelector('.new-task-date')
     let doneTaskList = !localStorage.doneTaskList ? [] : JSON.parse(localStorage.getItem('doneTaskList'))
     console.log(doneTaskList)
-    let counter = !localStorage.counter ? 0 : JSON.parse(localStorage.getItem('counter'));
+
     let toDoTaskList = !localStorage.toDoTaskList ? [] : JSON.parse(localStorage.getItem('toDoTaskList'))
     let deletedTaskList = !localStorage.deletedTaskList ? [] : JSON.parse(localStorage.getItem('deletedTaskList'))
     //!localStorage.toDoTaskList ? toDoTaskList = [] : toDoTaskList = JSON.parse(localStorage.getItem('toDoTaskList'))
+
 
 
 
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.id = Date.now();
         this.taskText = taskText;
         this.taskDeadline = taskDeadline;
-        this.date = new Date().toString();
+        this.date = new Date();
         this.checked = false;
         this.color = '';
     }
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('toDoTaskList', JSON.stringify(toDoTaskList));
         localStorage.setItem('doneTaskList', JSON.stringify(doneTaskList))
         localStorage.setItem('deletedTaskList', JSON.stringify(deletedTaskList))
-        localStorage.setItem('counter', JSON.stringify(counter))
     }
 
 
@@ -115,17 +115,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 //SORTED FUNCTION
-    ascSort = function (){
-        toDoTaskList.sort((a,b)=> a.Date - b.Date)
+    ascSort = function () {
+        toDoTaskList.sort((a,b)=> a.date - b.date)
         storageRefresh();
         taskMaker();
         console.log(toDoTaskList)
     }
 
     descSort = function () {
-        toDoTaskList.sort((a,b)=> b.Date - a.Date)
+        toDoTaskList.sort((a,b)=> b.date - a.date)
         storageRefresh();
         taskMaker();
+        console.log(toDoTaskList)
     }
 
 
@@ -218,25 +219,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
-        /* taskTextField.addEventListener('mouseover', function (){
-             let overlayText = document.querySelector('.task-text-overlay')
-             overlayText.style.display = 'block';
-         })*/
-
-
         document.addEventListener('click', function (event) {
             event.target.focus()
         })
 
 
-        let taskTextField = document.getElementsByClassName('.task-text')
 
+        document.addEventListener('dblclick', function (event) {
+            if (event.target.className === 'task-text') {
+            let id = event.target.closest('.task').id;
+            let targetIndex = toDoTaskList.findIndex(item => item.id === Number(id))
+                event.target.style.display = 'none'
+                let task = event.target.closest('.task')
+                let input = document.createElement('input')
+                task.append(input)
+                input.addEventListener('blur', function () {
+                        toDoTaskList[targetIndex].taskText = input.value
+                        console.log(toDoTaskList[targetIndex])
+                        event.target.style.display = 'inline'
+                        taskMaker()
+                    })
 
-        taskTextField.addEventListener('dblclick', function () {
-            event.target.setAttribute('contenteditable', true)
-        })
+                }
+})
 
 
 
@@ -251,7 +256,13 @@ function openBlock () {
     block.classList.toggle('deleted__accordeon')
 }
 
-
+/*function downloadTasks () {
+    let tasksList = new File([JSON.parse(localStorage.getItem('toDoTaskList'))], 'taskList.txt', {type:'text/plain'})
+    let link = document.querySelector('.downloadTaskList')
+    link.setAttribute('download', tasksList)
+    link.click()
+    console.log(tasksList)
+}*/
 
 
 //TASK REPLACER

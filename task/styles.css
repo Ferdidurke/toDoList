@@ -115,16 +115,4 @@
     resize: none;
 }
 
-.task-form__button {
-    width: 100%;
-    height: 40px;
-    background: cornflowerblue;
-    color: aqua;
-    border: none;
-    border-radius: 0 0 18px 18px;
-}
 
-.task-form__button:hover {
-    background: lightblue;
-    cursor: pointer;
-}
