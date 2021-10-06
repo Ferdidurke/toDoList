@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     //TASK CONSTRUCTOR
-    function Task(id, taskText, taskDeadline) {
-        this.id = id;
+    function Task(taskText, taskDeadline) {
+        this.id = Date.now();
         this.taskText = taskText;
         this.taskDeadline = taskDeadline;
         this.date = new Date().toString();
@@ -114,6 +114,21 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 
+//SORTED FUNCTION
+    ascSort = function (){
+        toDoTaskList.sort((a,b)=> a.Date - b.Date)
+        storageRefresh();
+        taskMaker();
+        console.log(toDoTaskList)
+    }
+
+    descSort = function () {
+        toDoTaskList.sort((a,b)=> b.Date - a.Date)
+        storageRefresh();
+        taskMaker();
+    }
+
+
     // TODOTASK RENDER FUNC
     function taskMaker() {
         let toDoTasks = document.querySelector('.undone-tasks__container')
@@ -123,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 toDoTasks.innerHTML += createTask(item);
             })
         }
-        counter++
     }
 
     // DONETASK RENDER FUNC
@@ -160,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //NEW TASK CREATOR
         addTaskBtn.addEventListener('click', function () {
-            toDoTaskList.push(new Task(counter, taskTextValue.value, taskDateDeadline.value))
+            toDoTaskList.push(new Task(taskTextValue.value, taskDateDeadline.value))
             storageRefresh();
             taskMaker();
             taskTextValue.value = '';
@@ -236,6 +250,9 @@ function openBlock () {
     const block = document.querySelector('.deleted__tasks__container')
     block.classList.toggle('deleted__accordeon')
 }
+
+
+
 
 //TASK REPLACER
 /*function deleteTask () {
