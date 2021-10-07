@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+/*document.addEventListener('DOMContentLoaded', function() {
     const task = document.querySelector('.task')
     task.addEventListener('click', function (event){
         event.target.focus()
@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const tasks = document.getElementsByClassName("task");
 
-    console.log(tasks)
+
     let index = 0;
 
     tasks[index].focus();
@@ -26,13 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /*const choosenTask = document.activeElement;
-    choosenTask.addEventListener('keydown', function (event){
-        if (event.keyCode === '69') {
-            let taskTextField = choosenTask.querySelector('.task-text')
-            taskTextField.setAttribute('contenteditable', true);
-        }*/
-})
+})*/
 
 
 

@@ -1,17 +1,20 @@
-
-document.addEventListener('DOMContentLoaded', function() {
-
-
+    let logText = '';
     let addTaskBtn = document.querySelector('.new-task__button')
     let taskTextValue = document.querySelector('.new-task-text')
     let taskDateDeadline = document.querySelector('.new-task-date')
     let doneTaskList = !localStorage.doneTaskList ? [] : JSON.parse(localStorage.getItem('doneTaskList'))
-    console.log(doneTaskList)
-
     let toDoTaskList = !localStorage.toDoTaskList ? [] : JSON.parse(localStorage.getItem('toDoTaskList'))
     let deletedTaskList = !localStorage.deletedTaskList ? [] : JSON.parse(localStorage.getItem('deletedTaskList'))
-    //!localStorage.toDoTaskList ? toDoTaskList = [] : toDoTaskList = JSON.parse(localStorage.getItem('toDoTaskList'))
+    let log = !localStorage.log ? [] : JSON.parse(localStorage.getItem('log'))
 
+    function dateFormat (date = new Date()) {
+        return date.toLocaleString()
+    }
+    deadliner(toDoTaskList)
+    deadliner(doneTaskList)
+    taskMaker()
+    doneTaskMaker()
+    deletedTaskMaker()
 
 
 
@@ -19,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function Task(taskText, taskDeadline) {
         this.id = Date.now();
         this.taskText = taskText;
-        this.taskDeadline = taskDeadline;
-        this.date = new Date();
+        this.taskDeadline = dateFormat(taskDeadline);
+        this.date = dateFormat();
         this.checked = false;
         this.color = '';
     }
@@ -28,20 +31,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // UPDATE LOCALSTORAGE
     function storageRefresh() {
         localStorage.setItem('toDoTaskList', JSON.stringify(toDoTaskList));
-        localStorage.setItem('doneTaskList', JSON.stringify(doneTaskList))
-        localStorage.setItem('deletedTaskList', JSON.stringify(deletedTaskList))
+        localStorage.setItem('doneTaskList', JSON.stringify(doneTaskList));
+        localStorage.setItem('deletedTaskList', JSON.stringify(deletedTaskList));
+        localStorage.setItem('log', JSON.stringify(log))
     }
 
 
-// Change TASK COLOR
+    // Change TASK COLOR
     function deadliner(array) {
         array.forEach(function (item) {
             let deadlineTime = Date.parse(item.taskDeadline)
             let currentTime = Date.now()
             if (deadlineTime - currentTime < 3600000) {
-                console.log('MON')
                 item.color = 'yellow'
-                console.log(item)
             }
             if (deadlineTime - currentTime < 0) {
                 item.color = 'red'
@@ -49,15 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 
-    deadliner(toDoTaskList)
-    deadliner(doneTaskList)
-
 
 
 
     // TASK CREATOR
     const createTask = (task) => {
-        return `<div class="task" id="${task.id}" title = "${task.taskText}" draggable="true" style="background: ${task.color}" tabindex="0">
+        return `<div class="task" id="${task.id}" title = "${task.taskText}" style="background: ${task.color}" tabindex="0" draggable="true" onclick="focus()">
             <div class="closed-button__container">
                 <button class="closed-button" onclick="deleter(${task.id})">X</button>
             </div>
@@ -65,11 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span class="create-date">Дата создания задачи: ${task.date} </span>
             </div>
             <div class="task-deadline">
-                <span class="deadline-date">${task.taskDeadline}</span>
+                <span class="deadline-date">Дата выполнения задачи: ${dateFormat(task.taskDeadline)}</span>
             </div>
             <div class="task-text__block">
-                <div class="task-text-overlay">${task.taskText}</div>
-                <p class="task-text">${task.taskText}</p>
+                <p class="task-text" tabindex="0">${task.taskText}</p>
             </div>
             <div class="task-status">
                 <span class="status-text">DONE:</span>
@@ -79,33 +77,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+
+
+
+
     // CHANGE TASK STATUS
-    doneTask = function (id) {
-            const currentItemIndex1 = toDoTaskList.findIndex(item => item.id === id)
-            const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
-            if (currentItemIndex1 !== -1) {
-                toDoTaskList[currentItemIndex1].checked = !toDoTaskList[currentItemIndex1].checked
-            }
-            if (currentItemIndex2 !== -1) {
-                doneTaskList[currentItemIndex2].checked = !doneTaskList[currentItemIndex2].checked
-            }
-            console.log(toDoTaskList)
-            console.log(doneTaskList)
-            arrayFilters()
-            doneTaskMaker ()
-            taskMaker()
-            storageRefresh()
+    const doneTask = function (id) {
+        const currentItemIndex1 = toDoTaskList.findIndex(item => item.id === id)
+        const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
+        if (currentItemIndex1 !== -1) {
+            toDoTaskList[currentItemIndex1].checked = !toDoTaskList[currentItemIndex1].checked
+            logText = `Task with id ${id} was checked at ${dateFormat()}`
+            logger()
+        }
+        if (currentItemIndex2 !== -1) {
+            doneTaskList[currentItemIndex2].checked = !doneTaskList[currentItemIndex2].checked
+            logText = `Task with id ${id} was unchecked at ${dateFormat()}`
+            logger()
         }
 
+        arrayFilters()
+        doneTaskMaker()
+        taskMaker()
+        storageRefresh()
+    }
+
+
+
     // FILTER ARRAYS
-    function arrayFilters () {
+    function arrayFilters() {
         toDoTaskList.forEach(function (item) {
             if (item.checked) {
                 doneTaskList.push(item)
                 toDoTaskList = toDoTaskList.filter((item) => !item.checked)
             }
         })
-
         doneTaskList.forEach(function (item) {
             if (!item.checked) {
                 toDoTaskList.push(item)
@@ -114,19 +120,19 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 
+
+
 //SORTED FUNCTION
-    ascSort = function () {
-        toDoTaskList.sort((a,b)=> a.date - b.date)
+    const ascSort = function () {
+        toDoTaskList.sort((a, b) => Date.parse(a.taskDeadline) - Date.parse(b.taskDeadline))
         storageRefresh();
         taskMaker();
-        console.log(toDoTaskList)
     }
 
-    descSort = function () {
-        toDoTaskList.sort((a,b)=> b.date - a.date)
+    const descSort = function () {
+        toDoTaskList.sort((a, b) => Date.parse(b.taskDeadline) - Date.parse(a.taskDeadline))
         storageRefresh();
         taskMaker();
-        console.log(toDoTaskList)
     }
 
 
@@ -142,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // DONETASK RENDER FUNC
-    function doneTaskMaker () {
+    function doneTaskMaker() {
         let DoneTasks = document.querySelector('.done-tasks__container')
         DoneTasks.innerHTML = '';
         if (doneTaskList.length > 0) {
@@ -150,11 +156,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 DoneTasks.innerHTML += createTask(item);
             })
         }
-
     }
 
     //DELETEDTASK RENDER FUNC
-    function deletedTaskMaker () {
+    function deletedTaskMaker() {
         let deletedTasks = document.querySelector('.deleted__tasks__container')
         deletedTasks.innerHTML = '';
         if (deletedTaskList.length > 0) {
@@ -162,115 +167,201 @@ document.addEventListener('DOMContentLoaded', function() {
                 deletedTasks.innerHTML += createTask(item);
             })
         }
-
     }
 
 
 
-    taskMaker()
-    doneTaskMaker ()
-    deletedTaskMaker()
-
-
 
     //NEW TASK CREATOR
-        addTaskBtn.addEventListener('click', function () {
-            toDoTaskList.push(new Task(taskTextValue.value, taskDateDeadline.value))
-            storageRefresh();
-            taskMaker();
-            taskTextValue.value = '';
-            taskDateDeadline.value = '';
+    addTaskBtn.addEventListener('click', function () {
+        toDoTaskList.push(new Task(taskTextValue.value, new Date(taskDateDeadline.value)))
+        logText = `Created new task with id: ${Date.now()}, text: ${taskTextValue.value}, deadline Date: ${dateFormat(new Date(taskDateDeadline.value))} at ${dateFormat()}`
+        storageRefresh();
+        taskMaker();
+        logger()
+        taskTextValue.value = '';
+        taskDateDeadline.value = '';
 
-        })
 
-        // TASK REPLACER ON DELETE BLOCK
-        deleter = function (id) {
-            let deletedDate = Date.now()
-            const currentItemIndex1 = toDoTaskList.findIndex(item => item.id === id)
-            const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
-            const deletedItemIndex = deletedTaskList.findIndex(item => item.id === id)
-            if (currentItemIndex1 !== -1) {
-                    toDoTaskList[currentItemIndex1].deletedDate = deletedDate;
-                    deletedTaskList.push(toDoTaskList[currentItemIndex1]);
-                    toDoTaskList.splice(currentItemIndex1, 1)
-                }
-            if (currentItemIndex2 !== -1) {
-                    doneTaskList[currentItemIndex2].deletedDate = deletedDate;
-                    deletedTaskList.push(doneTaskList[currentItemIndex2]);
-                    doneTaskList.splice(currentItemIndex2, 1)
-            }
+    })
 
-            if (deletedItemIndex !== -1) {
-                                let confirmation = confirm ('Are you right?')
-                                if (confirmation) {
-                                deletedTaskList = deletedTaskList.filter((item) => item.id !== id)
-                        }
-                    }
-
-            deletedTaskList.sort((a,b)=> a.deletedDate - b.deletedDate)
-
-            doneTaskMaker ()
-            taskMaker()
-            deletedTaskMaker()
-            storageRefresh();
+    // TASK REPLACER ON DELETE BLOCK
+    const deleter = function (id) {
+        let deletedDate = Date.now()
+        const currentItemIndex1 = toDoTaskList.findIndex(item => item.id === id)
+        const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
+        const deletedItemIndex = deletedTaskList.findIndex(item => item.id === id)
+        if (currentItemIndex1 !== -1) {
+            toDoTaskList[currentItemIndex1].deletedDate = deletedDate;
+            logText = `Task with id: ${toDoTaskList[currentItemIndex1].id}, deleted at ${dateFormat()}`
+            logger()
+            deletedTaskList.push(toDoTaskList[currentItemIndex1]);
+            toDoTaskList.splice(currentItemIndex1, 1)}
+        if (currentItemIndex2 !== -1) {
+            doneTaskList[currentItemIndex2].deletedDate = deletedDate;
+            logText = `Task with id: ${doneTaskList[currentItemIndex2].id}, deleted at ${dateFormat()}`
+            logger()
+            deletedTaskList.push(doneTaskList[currentItemIndex2]);
+            doneTaskList.splice(currentItemIndex2, 1)
         }
+        if (deletedItemIndex !== -1) {
+            let confirmation = confirm('Are you right?')
+            if (confirmation) {
+                logText = `Task with id: ${deletedTaskList[deletedItemIndex].id}, deleted at ${dateFormat()}`
+                logger()
+                deletedTaskList = deletedTaskList.filter((item) => item.id !== id)
+            }
+        }
+        deletedTaskList.sort((a, b) =>  b.deletedDate - a.deletedDate)
+        doneTaskMaker()
+        taskMaker()
+        deletedTaskMaker()
+        storageRefresh();
+    }
 
 
 
 
+    //CHANGE TEXT INPUT
+    document.addEventListener('click', function (event) {
+        event.target.focus()
+    })
+    document.addEventListener('dblclick', textChanger)
+    //document.addEventListener('focus', textChanger)
+    document.addEventListener('keydown', function () {
+        if (event.keyCode === 13) {
+            textChanger()
+        }
+    })
 
-        document.addEventListener('click', function (event) {
-            event.target.focus()
-        })
-
-
-
-        document.addEventListener('dblclick', function (event) {
-            if (event.target.className === 'task-text') {
+    function textChanger() {
+        if (event.target.className === 'task-text' && event.target.parentElement.parentElement.parentElement.className === 'undone-tasks__container') {
             let id = event.target.closest('.task').id;
             let targetIndex = toDoTaskList.findIndex(item => item.id === Number(id))
-                event.target.style.display = 'none'
-                let task = event.target.closest('.task')
-                let input = document.createElement('input')
-                task.append(input)
-                input.addEventListener('blur', function () {
-                        toDoTaskList[targetIndex].taskText = input.value
-                        console.log(toDoTaskList[targetIndex])
-                        event.target.style.display = 'inline'
-                        taskMaker()
-                    })
+            event.target.style.display = 'none'
+            let task = event.target.closest('.task')
+            let input = document.createElement('input')
+            task.append(input)
+            input.click()
+            input.addEventListener('blur', function () {
+                toDoTaskList[targetIndex].taskText = input.value
+                logText = `Text on task id =${toDoTaskList[targetIndex].id} was changed to ${toDoTaskList[targetIndex].taskText} at ${dateFormat()}`
+                logger()
+                if (toDoTaskList[targetIndex].taskText === '') toDoTaskList[targetIndex].taskText = '...'
+                event.target.style.display = 'inline'
+                taskMaker()
+                storageRefresh()
+            })
 
+        }
+    }
+
+
+    //KEYBOARD EVENTS
+
+    const tasksNavigate = document.getElementsByClassName("task");
+    let navigateIndex = 0;
+    tasksNavigate[navigateIndex].focus()
+    document.addEventListener('keydown', function (event) {
+        event = event || window.event;
+        if (event.target.className === 'task') {
+            let id = Number(event.target.id);
+            switch (event.keyCode) {
+                case 38:
+                    if (navigateIndex > 0) {
+                        tasksNavigate[--navigateIndex].focus();
+                    }
+                    break
+                case 40:
+                    if (navigateIndex < tasksNavigate.length) {
+                        tasksNavigate[++navigateIndex].focus();
+                    }
+                    break;
+                case 46: {
+                    deleter(id)
                 }
-})
+                    break
+            }
+            if (event.shiftKey && event.keyCode === 39 && event.target.parentElement.className === 'undone-tasks__container') {
+                doneTask(id)
+            }
+            if (event.shiftKey && event.keyCode === 37 && event.target.parentElement.className === 'done-tasks__container') {
+                doneTask(id)
+            }
+        }
+    })
 
 
 
-})
 
-
-
+//LOGGER
+function logger () {
+    console.log(logText)
+    log.push(logText)
+}
 
 //ACCORDEON OPEN
-function openBlock () {
+function openBlock() {
     const block = document.querySelector('.deleted__tasks__container')
     block.classList.toggle('deleted__accordeon')
 }
 
-/*function downloadTasks () {
-    let tasksList = new File([JSON.parse(localStorage.getItem('toDoTaskList'))], 'taskList.txt', {type:'text/plain'})
-    let link = document.querySelector('.downloadTaskList')
-    link.setAttribute('download', tasksList)
-    link.click()
-    console.log(tasksList)
-}*/
 
 
-//TASK REPLACER
-/*function deleteTask () {
-    const deleteButton = document.querySelector('.closed-button')
-    deleteButton.parentElement.parentElement.remove()
+// DRAG N DROP
 
-}*/
+
+    /*const doneTaskContainer = document.querySelector('.done-tasks');
+    const unDoneTaskContainer = document.querySelector('.undone-tasks');
+
+
+    function clicker() {
+        if (event.target.className === 'task' || event.target.closest('.task')) {
+            const task = event.target.closest('.task')
+            doneTaskContainer.addEventListener('dragenter', function (event) {
+                event.preventDefault()
+                let targetNode = event.target
+                console.log(task)
+                console.log(targetNode)
+                if (targetNode.className === 'done-tasks') {
+                    console.log(targetNode)
+                    task.addEventListener('mouseup', function (event) {
+                        event.preventDefault()
+                        console.log(targetNode + 'ISDROPABLE')
+                    })
+                }
+            })
+        }
+
+    }
+
+
+    unDoneTaskContainer.addEventListener('dragstart', function (event) {
+        console.log('start undone' + event.target)
+        console.log(toDoTaskList)
+       // const id = Number(event.target.id)
+        //let targetIndex = toDoTaskList.findIndex(item => item.id === id)
+        //toDoTaskList.splice(targetIndex, 1)
+        //console.log(toDoTaskList)
+    })*/
+
+
+
+
+function downloadTasks () {
+    let tasks = new Blob (['Невыполненные задачи:', JSON.stringify(toDoTaskList), 'Выполненные задачи:', JSON.stringify(doneTaskList), 'Задачи на удаление:', JSON.stringify(deletedTaskList)], {type: 'text/plain'});
+    let a = document.querySelector('.downloadTaskList')
+    a.href = URL.createObjectURL(tasks);
+}
+
+
+
+function downloadLogs () {
+    let blob = new Blob ([JSON.stringify(log)], {type: 'text/plain'});
+    let a = document.querySelector('.downloadLogs')
+    a.href = URL.createObjectURL(blob);
+}
+
 
 
 

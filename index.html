@@ -6,15 +6,20 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="task/styles.css">
     <link href="task/task.html" rel="import">
-    <script src="script.js"></script>
-    <script src="task/dragNDrop.js"></script>
+    <script src="script.js" defer></script>
+    <script src="task/dragNDrop.js" defer></script>
     <script src="task/keyboardEvents.js"></script>
 </head>
 <body>
         <div class = "todo__container">
             <div class = "todo__head">
-                TO DO LIST
-                <a class="downloadTaskList" href="" onclick="downloadTasks()" >DOWNLOAD JSON</a>
+                <h1 class="list-header">TO DO LIST</h1>
+                <div class="link-container">
+                    <a class="downloadTaskList" href="" download="JSON.txt" onclick="downloadTasks()" >DOWNLOAD JSON</a>
+                </div>
+                <div class="link-container">
+                    <a class="downloadLogs" href="" download="LOG.txt" onclick="downloadLogs()" >DOWNLOAD LOG</a>
+                </div>
             </div>
             <div class = "new-task__container">
                 <label class="task-form__label">Срок выполнения задачи:</label>
