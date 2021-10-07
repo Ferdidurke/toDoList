@@ -1,16 +1,22 @@
 .task {
-    width: 95%;
+    width: 80%;
     overflow: auto;
+    color: black;
     box-sizing: border-box;
     margin: 5px 5px 5px 5px;
-    background: #2584ff;
     min-height: 150px;
-    background: rgba(47,49,255,0.84);
-    font-size: 18px;
-    border: 3px black solid;
+    background: rgba(255, 255, 255, 0.84);
+    font-size: 24px;
+    border: 4px #35065a solid;
     border-radius: 20px;
     padding: 10px;
     cursor: all-scroll;
+    opacity: 1;
+
+}
+
+.task:focus {
+    border: 8px black solid;
 }
 
 .closed-button__container {
@@ -20,9 +26,12 @@
 }
 
 .closed-button {
+    width: 40px;
+    height: 40px;
     background: none;
     border-radius: 20px;
     border: 2px solid;
+    font-size: 20px;
 }
 
 .closed-button:hover {
@@ -53,14 +62,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.task-text-overlay {
-    display: none;
-    width: 200px;
-    height: 200px;
-    background: wheat;
-    position: absolute;
-}
 
+
+.deleted {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
 .task-text {
     white-space: nowrap;

@@ -1,10 +1,10 @@
 body {
-    font-family: "Abyssinica SIL";
+
 
 }
 
 .todo__container {
-    width: 75%;
+    width: 90%;
     margin: 0 auto;
     border-radius: 30px;
     border: 12px solid lightslategray;
@@ -12,20 +12,17 @@ body {
 
 }
 
-/*.todo__container > div {
-    border: 3px solid;
-
-}*/
 
 .todo__head {
     text-align: center;
     font-size: 45px;
-    border-radius: 18px 18px 0px 0px;
+    border-radius: 18px 18px 0 0;
 }
 
 .todo__tasks {
     display:flex;
     width: 100%;
+    height: 40vh;
     box-sizing: border-box;
 }
 
@@ -44,17 +41,42 @@ body {
 
 }
 
+
 .undone-tasks__header {
     width: 100%;
+    display: flex;
+    position: sticky;
     border: 3px solid;
     text-align: center;
-    font-size: 20px;
+    font-size: 36px;
     box-sizing: border-box;
+    background-color: rgba(103,194,255,0.84);
+    top: 0;
 
 }
 
+.undone-tasks-text {
+    width: 100%;
+    position: sticky;
+}
+
+.sorting-buttons__container {
+    display: inline-flex;
+    right: 0;
+    position: absolute;
+}
+
+.button-image {
+    width: 35px;
+    height: 35px;
+}
+
+
 .undone-tasks__container {
     width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .new-task__container {
@@ -69,6 +91,7 @@ body {
     height: 40px;
     background: cornflowerblue;
     color: aqua;
+    font-size: 20px;
 }
 
 .new-task__button:hover {
@@ -88,17 +111,20 @@ body {
 .done-tasks__header {
     border: 3px solid;
     text-align: center;
-    font-size: 20px;
+    font-size: 36px;
     box-sizing: border-box;
 }
 .done-tasks__container {
-
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .deleted__tasks__button-container {
     height: 40px;
 
-    border-radius: 0px 0px 18px 18px;
+    border-radius: 0 0 18px 18px;
 }
 
 .deleted__tasks__container {
@@ -120,7 +146,7 @@ body {
 }
 
 
-.deleted__accordeon {
+.extended {
     height: 300px;
     transition: height 1.5s ease-in-out;
 }
@@ -131,7 +157,8 @@ body {
     height: 40px;
     background: cornflowerblue;
     color: aqua;
-    border-radius: 0px 0px 18px 18px;
+    border-radius: 0 0 18px 18px;
+    font-size: 20px;
 }
 
 .deleted-tasks__button:hover {
@@ -139,4 +166,3 @@ body {
     cursor: pointer;
 
 }
-

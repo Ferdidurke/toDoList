@@ -10,13 +10,14 @@
     <script src="task/dragNDrop.js" defer></script>
     <script src="task/keyboardEvents.js"></script>
 </head>
+
 <body>
         <div class = "todo__container">
             <div class = "todo__head">
-                <h1 class="list-header">TO DO LIST</h1>
                 <div class="link-container">
                     <a class="downloadTaskList" href="" download="JSON.txt" onclick="downloadTasks()" >DOWNLOAD JSON</a>
                 </div>
+                <h1 class="list-header">TO DO LIST</h1>
                 <div class="link-container">
                     <a class="downloadLogs" href="" download="LOG.txt" onclick="downloadLogs()" >DOWNLOAD LOG</a>
                 </div>
@@ -32,12 +33,13 @@
 
                 <div class = "undone-tasks">
                     <div class = "undone-tasks__header">
-                        НЕВЫПОЛНЕННЫЕ ЗАДАЧИ
+                        <div class="undone-tasks-text">НЕВЫПОЛНЕННЫЕ ЗАДАЧИ</div>
+                        <div class="sorting-buttons__container">
+                            <button class = "asc-button"  onclick="ascSort()"><img src="https://cdn-icons-png.flaticon.com/512/814/814031.png" class="button-image"></button>
+                            <button class = "desc-button" onclick="descSort()"><img src="https://cdn-icons-png.flaticon.com/512/814/814055.png" class="button-image"></button>
+                        </div>
                     </div>
-                    <div class="sorting-buttons__container">
-                        <button class = "asc-button" onclick="ascSort()">Убывание</button>
-                        <button class = "desc-button" onclick="descSort()">Возрастание</button>
-                    </div>
+
                     <div class = "undone-tasks__container">
 
                     </div>
@@ -60,8 +62,8 @@
 
             </div>
 
-            </div>
         </div>
+
 
 
 
