@@ -12,7 +12,6 @@
     padding: 10px;
     cursor: all-scroll;
     opacity: 1;
-
 }
 
 .task-dragged {
@@ -21,6 +20,11 @@
 
 .task:focus {
     border: 8px black solid;
+}
+
+.deleted {
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .closed-button__container {
@@ -39,26 +43,9 @@
 }
 
 .closed-button:hover {
-    background: darkblue;
+    background: cornflowerblue;
     color: wheat;
     cursor: pointer;
-
-}
-
-.task-date {
-
-}
-
-.create-date {
-
-}
-
-.task-deadline {
-
-}
-
-.deadline-date {
-
 }
 
 .task-text__block {
@@ -67,27 +54,14 @@
     text-overflow: ellipsis;
 }
 
-
-.deleted {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
 .task-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .task-text:hover {
     cursor: pointer;
-}
-
-.task-status {
-
-}
-
-.status-text {
-
 }
 
 .status-check {
@@ -96,25 +70,6 @@
     opacity: 0.5;
     cursor: pointer;
     margin-right: 20px;
-}
-
-.new-task__form {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    height: 300px;
-    font-size: 16px;
-    border: black 3px solid;
-    border-radius: 20px;
-    background: #2584ff;
-    color: wheat;
-}
-
-.task-form__label {
-    font-size: 30px;
-    margin-top: 5px;
-    margin-bottom: 5px;
 }
 
 .new-task-date {

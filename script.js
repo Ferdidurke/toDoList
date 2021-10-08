@@ -12,7 +12,6 @@ function dateFormat(date = new Date()) {
     return date ? date.toLocaleString() : new Date().toLocaleString()
 }
 
-
 //TASK CONSTRUCTOR
 function Task(taskText, taskDeadline) {
     this.id = Date.now();
@@ -30,7 +29,6 @@ function storageRefresh() {
     localStorage.setItem('deletedTaskList', JSON.stringify(deletedTaskList));
     localStorage.setItem('log', JSON.stringify(log))
 }
-
 
 // Change TASK COLOR
 function deadliner(array) {
@@ -50,8 +48,6 @@ function deadliner(array) {
     })
 }
 
-deadliner(toDoTaskList)
-deadliner(doneTaskList)
 
 // TASK CREATOR
 const createTask = (task) => {
@@ -82,6 +78,7 @@ const doneTask = function (id) {
     const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
     if (currentItemIndex1 !== -1) {
         toDoTaskList[currentItemIndex1].checked = !toDoTaskList[currentItemIndex1].checked
+        toDoTaskList[currentItemIndex1].color = '';
         logText = `Task with id: ${id} moved to done at ${dateFormat()}`
         logger()
     }
@@ -94,7 +91,6 @@ const doneTask = function (id) {
     doneTaskMaker()
     taskMaker()
     storageRefresh()
-    dragEnabler()
 }
 
 
@@ -121,7 +117,6 @@ const ascSort = function () {
     storageRefresh();
     taskMaker();
 }
-
 const descSort = function () {
     toDoTaskList.sort((a, b) => Date.parse(b.taskDeadline) - Date.parse(a.taskDeadline))
     storageRefresh();
@@ -138,6 +133,7 @@ function taskMaker() {
             toDoTasks.innerHTML += createTask(item);
         })
     }
+    dragEnabler()
 }
 
 // DONETASK RENDER FUNC
@@ -162,19 +158,19 @@ function deletedTaskMaker() {
     }
 }
 
-
 //NEW TASK CREATOR
 addTaskBtn.addEventListener('click', function () {
     toDoTaskList.push(new Task(taskTextValue.value, new Date(taskDateDeadline.value)))
     logText = `Created new task with id: ${Date.now()}, text: ${taskTextValue.value}, deadline Date: ${dateFormat(new Date(taskDateDeadline.value))} at ${dateFormat()}`
     storageRefresh();
+    deadliner(toDoTaskList)
     taskMaker();
     logger()
     taskTextValue.value = '';
     taskDateDeadline.value = '';
 })
 
-// TASK REPLACER ON DELETE BLOCK
+// TASK REPLACER ON DELETE BLOCK AND DELETER
 const deleter = function (id) {
     let deletedDate = Date.now()
     const currentItemIndex1 = toDoTaskList.findIndex(item => item.id === id)
@@ -199,7 +195,6 @@ const deleter = function (id) {
     doneTaskMaker()
     taskMaker()
     deletedTaskMaker()
-    dragEnabler()
     storageRefresh()
 
     if (deletedItemIndex !== -1) {
@@ -218,24 +213,16 @@ const deleter = function (id) {
             }, 300);
         }
     }
-
 }
-
 
 //CHANGE TEXT INPUT
 document.addEventListener('click', function (event) {
     event.target.focus()
 })
-
 document.addEventListener('dblclick', textChanger)
-/*document.addEventListener('focusin', function (event) {
-    if (event.target.className === 'task-text') textChanger()
-})*/
 document.addEventListener('keydown', function () {
     if (event.keyCode === 13) textChanger()
-
 })
-
 
 function textChanger() {
     if (event.target.className === 'task-text' && event.target.parentElement.parentElement.parentElement.className === 'undone-tasks__container') {
@@ -263,11 +250,10 @@ function textChanger() {
 
     }
 }
-
+deadliner(toDoTaskList)
 taskMaker()
 doneTaskMaker()
 deletedTaskMaker()
-dragEnabler ()
 
 //KEYBOARD EVENTS
 
@@ -279,11 +265,21 @@ document.addEventListener('keydown', function (event) {
     if (event.target.className === 'task') {
         let id = Number(event.target.id);
         switch (event.keyCode) {
+            case 37:
+                if (navigateIndex > 0) {
+                    tasksNavigate[--navigateIndex].focus();
+                }
+                break
             case 38:
                 if (navigateIndex > 0) {
                     tasksNavigate[--navigateIndex].focus();
                 }
                 break
+            case 39:
+                if (navigateIndex < tasksNavigate.length) {
+                    tasksNavigate[++navigateIndex].focus();
+                }
+                break;
             case 40:
                 if (navigateIndex < tasksNavigate.length) {
                     tasksNavigate[++navigateIndex].focus();
@@ -291,7 +287,7 @@ document.addEventListener('keydown', function (event) {
                 break;
             case 46: {
                 deleter(id)
-            }
+                }
                 break
         }
         if (event.shiftKey && event.keyCode === 39 && event.target.parentElement.className === 'undone-tasks__container') {
@@ -302,8 +298,6 @@ document.addEventListener('keydown', function (event) {
         }
         if (event.keyCode === 69) {
             event.target.childNodes[7].firstElementChild.click()
-            textChanger()
-
         }
     }
 })
@@ -323,8 +317,6 @@ function openBlock() {
 
 
 // DRAG N DROP
-
-
 const doneTaskContainer = document.querySelector('.done-tasks');
 const unDoneTaskContainer = document.querySelector('.undone-tasks');
 const containers = [doneTaskContainer, unDoneTaskContainer]
@@ -365,8 +357,6 @@ doneTaskContainer.addEventListener('drop', function (event){
     }
 })
 
-
-
 function dragEnabler () {
     const draggableTasks = document.querySelectorAll('.task')
     draggableTasks.forEach(dragItem => {
@@ -381,18 +371,23 @@ function dragEnabler () {
 }
 
 
-
 //DOWNLOAD FUNCTIONS
 function downloadTasks() {
+    let a = document.createElement('a');
+    a.download = 'tasks.txt';
     let tasks = new Blob(['Невыполненные задачи:', JSON.stringify(toDoTaskList), 'Выполненные задачи:', JSON.stringify(doneTaskList), 'Задачи на удаление:', JSON.stringify(deletedTaskList)], {type: 'text/plain'});
-    let a = document.querySelector('.downloadTaskList')
     a.href = URL.createObjectURL(tasks);
+    a.click()
+    URL.revokeObjectURL(a.href);
 }
 
 function downloadLogs() {
-    let blob = new Blob([JSON.stringify(log)], {type: 'text/plain'});
-    let a = document.querySelector('.downloadLogs')
-    a.href = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.download = 'log.txt';
+    let logs = new Blob([JSON.stringify(log)], {type: 'text/plain'});
+    a.href = URL.createObjectURL(logs);
+    a.click()
+    URL.revokeObjectURL(a.href);
 }
 
 

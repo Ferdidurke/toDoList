@@ -5,32 +5,34 @@
     <title>Title</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="task/styles.css">
-    <link href="task/task.html" rel="import">
     <script src="script.js" defer></script>
-    <script src="task/dragNDrop.js" defer></script>
-    <script src="task/keyboardEvents.js"></script>
 </head>
 
 <body>
         <div class = "todo__container">
             <div class = "todo__head">
-                <div class="link-container">
-                    <a class="downloadTaskList" href="" download="JSON.txt" onclick="downloadTasks()" >DOWNLOAD JSON</a>
-                </div>
                 <h1 class="list-header">TO DO LIST</h1>
-                <div class="link-container">
-                    <a class="downloadLogs" href="" download="LOG.txt" onclick="downloadLogs()" >DOWNLOAD LOG</a>
-                </div>
             </div>
+            <div class = "application">
+                <div class="link-container">
+                    <button class="button download-button" onclick="downloadTasks()">
+                        DOWNLOAD JSON
+                    </button>
+                </div>
             <div class = "new-task__container">
                 <label class="task-form__label">Срок выполнения задачи:</label>
                 <input type="datetime-local" class="new-task-date" value="" required>
                 <label class="task-form__label">Введите содержание задачи:</label>
                 <textarea class="new-task-text" required></textarea>
-                <button class ="new-task__button"> NEW TASK </button>
+                <button class ="button new-task__button"> NEW TASK </button>
+            </div>
+                <div class="link-container">
+                    <button class="button download-button" onclick="downloadLogs()" >
+                        DOWNLOAD LOG
+                    </button>
+                </div>
             </div>
             <div class = "todo__tasks">
-
                 <div class = "undone-tasks">
                     <div class = "undone-tasks__header">
                         <div class="undone-tasks-text">НЕВЫПОЛНЕННЫЕ ЗАДАЧИ</div>
@@ -39,29 +41,22 @@
                             <button class = "desc-button" onclick="descSort()"><img src="https://cdn-icons-png.flaticon.com/512/814/814055.png" class="button-image"></button>
                         </div>
                     </div>
-
                     <div class = "undone-tasks__container">
-
                     </div>
-
                 </div>
                 <div class = "done-tasks">
                     <div class = "done-tasks__header">
                         ВЫПОЛНЕННЫЕ ЗАДАЧИ
                     </div>
                     <div class = "done-tasks__container">
-
                     </div>
                 </div>
             </div>
-
             <div class="deleted__tasks__button-container">
-                <button class = "deleted-tasks__button" onclick="openBlock()">Open</button>
+                <button class = "button deleted-tasks__button" onclick="openBlock()">Open</button>
             </div>
             <div class="deleted__tasks__container">
-
             </div>
-
         </div>
 
 
