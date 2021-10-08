@@ -98,6 +98,7 @@ const doneTask = function (id) {
     doneTaskMaker()
     taskMaker()
     storageRefresh()
+    dragEnabler()
 }
 
 
@@ -204,6 +205,7 @@ const deleter = function (id) {
     doneTaskMaker()
     taskMaker()
     deletedTaskMaker()
+    dragEnabler()
     storageRefresh()
 
     if (deletedItemIndex !== -1) {
@@ -228,10 +230,10 @@ const deleter = function (id) {
 
 //CHANGE TEXT INPUT
 document.addEventListener('click', function (event) {
-    event.target.focus()
+   event.target.focus()
 })
 document.addEventListener('dblclick', textChanger)
-document.addEventListener('focusin', textChanger)
+//document.addEventListener('focusin', textChanger)
 document.addEventListener('keydown', function () {
     if (event.keyCode === 13) textChanger()
 
@@ -264,16 +266,15 @@ function textChanger() {
 }
 
 taskMaker()
-
 doneTaskMaker()
 deletedTaskMaker()
-
+dragEnabler ()
 
 //KEYBOARD EVENTS
 
 const tasksNavigate = document.getElementsByClassName('task');
 let navigateIndex = 0;
-tasksNavigate[navigateIndex].focus()
+tasksNavigate[navigateIndex] ? tasksNavigate[navigateIndex].focus() : '';
 document.addEventListener('keydown', function (event) {
     event = event || window.event;
     if (event.target.className === 'task') {
@@ -325,39 +326,42 @@ function openBlock() {
 // DRAG N DROP
 
 
-/*const doneTaskContainer = document.querySelector('.done-tasks');
+const doneTaskContainer = document.querySelector('.done-tasks');
 const unDoneTaskContainer = document.querySelector('.undone-tasks');
+const containers = [doneTaskContainer, unDoneTaskContainer]
 
+containers.forEach(container => {
+    container.addEventListener('dragenter', function (event) {
+        event.preventDefault()
+    })
+    container.addEventListener('dragover', function (event) {
+        event.preventDefault()
+    })
+    container.addEventListener('drop', function (event) {
+        let id = Number(event.dataTransfer.getData('id'))
+        doneTask(id)
+        doneTaskMaker()
+        taskMaker()
+        dragEnabler()
+        storageRefresh()
+    })
 
-function clicker() {
-    if (event.target.className === 'task' || event.target.closest('.task')) {
-        const task = event.target.closest('.task')
-        doneTaskContainer.addEventListener('dragenter', function (event) {
-            event.preventDefault()
-            let targetNode = event.target
-            console.log(task)
-            console.log(targetNode)
-            if (targetNode.className === 'done-tasks') {
-                console.log(targetNode)
-                task.addEventListener('mouseup', function (event) {
-                    event.preventDefault()
-                    console.log(targetNode + 'ISDROPABLE')
-                })
-            }
+})
+
+function dragEnabler () {
+    const draggableTasks = document.querySelectorAll('.task')
+    draggableTasks.forEach(dragItem => {
+        dragItem.addEventListener('dragstart', function (event) {
+            event.target.classList.add('task-dragged')
+            event.dataTransfer.setData('id', event.target.id)
         })
-    }
-
+        dragItem.addEventListener('dragend', function (event) {
+            event.target.classList.remove('task-dragged')
+        })
+    })
 }
 
 
-unDoneTaskContainer.addEventListener('dragstart', function (event) {
-    console.log('start undone' + event.target)
-    console.log(toDoTaskList)
-   // const id = Number(event.target.id)
-    //let targetIndex = toDoTaskList.findIndex(item => item.id === id)
-    //toDoTaskList.splice(targetIndex, 1)
-    //console.log(toDoTaskList)
-})*/
 
 //DOWNLOAD FUNCTIONS
 function downloadTasks() {
@@ -365,7 +369,6 @@ function downloadTasks() {
     let a = document.querySelector('.downloadTaskList')
     a.href = URL.createObjectURL(tasks);
 }
-
 
 function downloadLogs() {
     let blob = new Blob([JSON.stringify(log)], {type: 'text/plain'});

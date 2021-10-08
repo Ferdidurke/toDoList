@@ -15,6 +15,10 @@
 
 }
 
+.task-dragged {
+    opacity: 0.3;
+}
+
 .task:focus {
     border: 8px black solid;
 }
