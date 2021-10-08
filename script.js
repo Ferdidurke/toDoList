@@ -231,11 +231,10 @@ document.addEventListener('click', function (event) {
     event.target.focus()
 })
 document.addEventListener('dblclick', textChanger)
-//document.addEventListener('focus', textChanger)
+document.addEventListener('focusin', textChanger)
 document.addEventListener('keydown', function () {
-    if (event.keyCode === 13) {
-        textChanger()
-    }
+    if (event.keyCode === 13) textChanger()
+
 })
 
 function textChanger() {
@@ -247,14 +246,18 @@ function textChanger() {
         let input = document.createElement('input')
         task.append(input)
         input.click()
-        input.addEventListener('blur', function () {
-            toDoTaskList[targetIndex].taskText = input.value
-            logText = `Text on task id =${toDoTaskList[targetIndex].id} was changed to ${toDoTaskList[targetIndex].taskText} at ${dateFormat()}`
-            logger()
-            if (toDoTaskList[targetIndex].taskText === '') toDoTaskList[targetIndex].taskText = '...'
-            event.target.style.display = 'inline'
-            taskMaker()
-            storageRefresh()
+            function doneChange () {
+                toDoTaskList[targetIndex].taskText = input.value
+                logText = `Text on task id =${toDoTaskList[targetIndex].id} was changed to ${toDoTaskList[targetIndex].taskText} at ${dateFormat()}`
+                logger()
+                if (toDoTaskList[targetIndex].taskText === '') toDoTaskList[targetIndex].taskText = '...'
+                event.target.style.display = 'inline'
+                taskMaker()
+                storageRefresh()
+            }
+        input.addEventListener('blur', doneChange)
+        input.addEventListener('keydown', function () {
+            if (event.keyCode === 13) doneChange()
         })
 
     }
@@ -298,7 +301,7 @@ document.addEventListener('keydown', function (event) {
             doneTask(id)
         }
         if (event.keyCode === 69) {
-
+            event.target.childNodes[7].firstElementChild.click()
             textChanger()
 
         }
