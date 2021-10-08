@@ -10,15 +10,14 @@ let log = !localStorage.log ? [] : JSON.parse(localStorage.getItem('log'))
 
 function dateFormat(date = new Date()) {
     return date ? date.toLocaleString() : new Date().toLocaleString()
-
 }
 
 
 //TASK CONSTRUCTOR
 function Task(taskText, taskDeadline) {
     this.id = Date.now();
-    this.taskText = taskText;
-    this.taskDeadline = dateFormat(taskDeadline); //
+    this.taskText = taskText || '...';
+    this.taskDeadline = dateFormat(taskDeadline);
     this.date = dateFormat();
     this.checked = false;
     this.color = '';
@@ -37,9 +36,7 @@ function storageRefresh() {
 function deadliner(array) {
     array.forEach(function (item) {
         let deadlineTime = Date.parse(item.taskDeadline)
-        console.log(deadlineTime)
-        let currentTime = Date.parse(dateFormat(new Date))
-        console.log(currentTime)
+        let currentTime = Date.parse(dateFormat())
         if (deadlineTime - currentTime < 3600000 && deadlineTime - currentTime > 0) {
             item.color = 'yellow'
             logText = `Deadline on task with id: ${item.id} will expired at ${item.taskDeadline}`
@@ -85,15 +82,14 @@ const doneTask = function (id) {
     const currentItemIndex2 = doneTaskList.findIndex(item => item.id === id)
     if (currentItemIndex1 !== -1) {
         toDoTaskList[currentItemIndex1].checked = !toDoTaskList[currentItemIndex1].checked
-        logText = `Task with id ${id} was checked at ${dateFormat()}`
+        logText = `Task with id: ${id} moved to done at ${dateFormat()}`
         logger()
     }
     if (currentItemIndex2 !== -1) {
         doneTaskList[currentItemIndex2].checked = !doneTaskList[currentItemIndex2].checked
-        logText = `Task with id ${id} was unchecked at ${dateFormat()}`
+        logText = `Task with id: ${id} moved to undone at ${dateFormat()}`
         logger()
     }
-
     arrayFilters()
     doneTaskMaker()
     taskMaker()
@@ -230,10 +226,13 @@ const deleter = function (id) {
 
 //CHANGE TEXT INPUT
 document.addEventListener('click', function (event) {
-   event.target.focus()
+    event.target.focus()
 })
+
 document.addEventListener('dblclick', textChanger)
-//document.addEventListener('focusin', textChanger)
+/*document.addEventListener('focusin', function (event) {
+    if (event.target.className === 'task-text') textChanger()
+})*/
 document.addEventListener('keydown', function () {
     if (event.keyCode === 13) textChanger()
 
@@ -246,6 +245,7 @@ function textChanger() {
         event.target.style.display = 'none'
         let task = event.target.closest('.task')
         let input = document.createElement('input')
+        input.value = toDoTaskList[targetIndex].taskText
         task.append(input)
         input.click()
             function doneChange () {
@@ -337,16 +337,36 @@ containers.forEach(container => {
     container.addEventListener('dragover', function (event) {
         event.preventDefault()
     })
-    container.addEventListener('drop', function (event) {
-        let id = Number(event.dataTransfer.getData('id'))
+})
+
+
+unDoneTaskContainer.addEventListener('drop', function (event) {
+    let id = Number(event.dataTransfer.getData('id'))
+    let targetIndex = doneTaskList.findIndex(item => item.id === Number(id))
+    let targetItem = doneTaskList[targetIndex]
+        if (targetItem.checked) {
+            doneTask(id)
+            storageRefresh()
+            doneTaskMaker()
+            taskMaker()
+            dragEnabler()
+        }
+})
+
+doneTaskContainer.addEventListener('drop', function (event){
+    let id = Number(event.dataTransfer.getData('id'))
+    let targetIndex = toDoTaskList.findIndex(item => item.id === Number(id))
+    let targetItem = toDoTaskList[targetIndex]
+    if (!targetItem.checked) {
         doneTask(id)
+        storageRefresh()
         doneTaskMaker()
         taskMaker()
         dragEnabler()
-        storageRefresh()
-    })
-
+    }
 })
+
+
 
 function dragEnabler () {
     const draggableTasks = document.querySelectorAll('.task')
