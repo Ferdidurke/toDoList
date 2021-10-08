@@ -7,8 +7,10 @@ let toDoTaskList = !localStorage.toDoTaskList ? [] : JSON.parse(localStorage.get
 let deletedTaskList = !localStorage.deletedTaskList ? [] : JSON.parse(localStorage.getItem('deletedTaskList'))
 let log = !localStorage.log ? [] : JSON.parse(localStorage.getItem('log'))
 
+
 function dateFormat(date = new Date()) {
-    return date.toLocaleString()
+    return date ? date.toLocaleString() : new Date().toLocaleString()
+
 }
 
 
@@ -16,7 +18,7 @@ function dateFormat(date = new Date()) {
 function Task(taskText, taskDeadline) {
     this.id = Date.now();
     this.taskText = taskText;
-    this.taskDeadline = taskDeadline; //
+    this.taskDeadline = dateFormat(taskDeadline); //
     this.date = dateFormat();
     this.checked = false;
     this.color = '';
@@ -36,7 +38,7 @@ function deadliner(array) {
     array.forEach(function (item) {
         let deadlineTime = Date.parse(item.taskDeadline)
         console.log(deadlineTime)
-        let currentTime = Date.parse(new Date())
+        let currentTime = Date.parse(dateFormat(new Date))
         console.log(currentTime)
         if (deadlineTime - currentTime < 3600000 && deadlineTime - currentTime > 0) {
             item.color = 'yellow'
@@ -64,7 +66,7 @@ const createTask = (task) => {
                 <span class="create-date">Дата создания задачи: ${task.date} </span>
             </div>
             <div class="task-deadline">
-                <span class="deadline-date">Дата выполнения задачи: ${dateFormat(task.taskDeadline)}</span>
+                <span class="deadline-date">Дата выполнения задачи: ${task.taskDeadline}</span>
             </div>
             <div class="task-text__block">
                 <p class="task-text" tabindex="0">${task.taskText}</p>
@@ -185,14 +187,14 @@ const deleter = function (id) {
     const deletedItemIndex = deletedTaskList.findIndex(item => item.id === id)
     if (currentItemIndex1 !== -1) {
         toDoTaskList[currentItemIndex1].deletedDate = deletedDate;
-        logText = `Task with id: ${toDoTaskList[currentItemIndex1].id}, deleted at ${dateFormat()}`
+        logText = `Task with id: ${toDoTaskList[currentItemIndex1].id} mark to delete at ${dateFormat()}`
         logger()
         deletedTaskList.push(toDoTaskList[currentItemIndex1]);
         toDoTaskList.splice(currentItemIndex1, 1)
     }
     if (currentItemIndex2 !== -1) {
         doneTaskList[currentItemIndex2].deletedDate = deletedDate;
-        logText = `Task with id: ${doneTaskList[currentItemIndex2].id}, deleted at ${dateFormat()}`
+        logText = `Task with id: ${doneTaskList[currentItemIndex2].id} mark to delete at ${dateFormat()}`
         logger()
         deletedTaskList.push(doneTaskList[currentItemIndex2]);
         doneTaskList.splice(currentItemIndex2, 1)
@@ -207,7 +209,7 @@ const deleter = function (id) {
     if (deletedItemIndex !== -1) {
         let confirmation = confirm('Are you right?')
         if (confirmation) {
-            logText = `Task with id: ${deletedTaskList[deletedItemIndex].id}, deleted at ${dateFormat()}`
+            logText = `Task with id: ${deletedTaskList[deletedItemIndex].id} deleted at ${dateFormat()}`
             logger()
             deletedTaskList[deletedItemIndex].onDelete = true;
             const taskOnDelete = document.getElementById(deletedTaskList[deletedItemIndex].id)
@@ -263,6 +265,7 @@ taskMaker()
 doneTaskMaker()
 deletedTaskMaker()
 
+
 //KEYBOARD EVENTS
 
 const tasksNavigate = document.getElementsByClassName('task');
@@ -293,6 +296,11 @@ document.addEventListener('keydown', function (event) {
         }
         if (event.shiftKey && event.keyCode === 37 && event.target.parentElement.className === 'done-tasks__container') {
             doneTask(id)
+        }
+        if (event.keyCode === 69) {
+
+            textChanger()
+
         }
     }
 })
