@@ -172,8 +172,6 @@ addTaskBtn.addEventListener('click', function () {
     logger()
     taskTextValue.value = '';
     taskDateDeadline.value = '';
-
-
 })
 
 // TASK REPLACER ON DELETE BLOCK
@@ -237,6 +235,7 @@ document.addEventListener('keydown', function () {
     if (event.keyCode === 13) textChanger()
 
 })
+
 
 function textChanger() {
     if (event.target.className === 'task-text' && event.target.parentElement.parentElement.parentElement.className === 'undone-tasks__container') {
@@ -343,8 +342,8 @@ containers.forEach(container => {
 unDoneTaskContainer.addEventListener('drop', function (event) {
     let id = Number(event.dataTransfer.getData('id'))
     let targetIndex = doneTaskList.findIndex(item => item.id === Number(id))
-    let targetItem = doneTaskList[targetIndex]
-        if (targetItem.checked) {
+    let targetItem = doneTaskList[targetIndex] || undefined
+        if (targetItem && targetItem.checked) {
             doneTask(id)
             storageRefresh()
             doneTaskMaker()
@@ -356,8 +355,8 @@ unDoneTaskContainer.addEventListener('drop', function (event) {
 doneTaskContainer.addEventListener('drop', function (event){
     let id = Number(event.dataTransfer.getData('id'))
     let targetIndex = toDoTaskList.findIndex(item => item.id === Number(id))
-    let targetItem = toDoTaskList[targetIndex]
-    if (!targetItem.checked) {
+    let targetItem = toDoTaskList[targetIndex] || undefined
+    if (targetItem && !targetItem.checked) {
         doneTask(id)
         storageRefresh()
         doneTaskMaker()
